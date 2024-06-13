@@ -5,6 +5,13 @@ set inccommand=nosplit
 
 
 set rtp+=~/.fzf
+" set rtp+=~/.vim/bundle/vim-colors-solarized
+
+" let g:solarized_termtrans = 1
+" let g:solarized_bold = 1
+" let g:solarized_termcolors = 256
+" set background=dark
+" colorscheme solarized
 
 
 if empty(glob('~/.vim/autoload/plug.vim'))
