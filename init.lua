@@ -1,3 +1,4 @@
+
 require "core"
 
 local custom_init_path = vim.api.nvim_get_runtime_file("lua/custom/init.lua", false)[1]
@@ -19,3 +20,5 @@ end
 dofile(vim.g.base46_cache .. "defaults")
 vim.opt.rtp:prepend(lazypath)
 require "plugins"
+vim.cmd("source ~/.config/nvim/vimrc")
+
