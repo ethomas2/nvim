@@ -87,16 +87,16 @@ local plugins = {
   },
   -- Text objects
   {
+    'kana/vim-textobj-user',
+    lazy = false,
+  },
+  {
     'kana/vim-textobj-entire',
     lazy = false,
   },
   {
     -- TODO: if there are problems with this load ethomas2/vim-indent-object
     'michaeljsmith/vim-indent-object',
-    lazy = false,
-  },
-  {
-    'kana/vim-textobj-user',
     lazy = false,
   },
   {

@@ -22,3 +22,10 @@ vim.opt.rtp:prepend(lazypath)
 require "plugins"
 vim.cmd("source ~/.config/nvim/vimrc")
 
+local config_path = '/Users/evanthomas/.config/nvim/vim-files/'
+
+vim.cmd('source ' .. config_path .. 'header.vim')
+vim.cmd('source ' .. config_path .. 'remaps.vim')
+vim.cmd('source ' .. config_path .. 'run.vim')
+vim.cmd('source ' .. config_path .. 'snippets.vim')
+vim.cmd('source ' .. config_path .. 'windowsAndTabs.vim')
