@@ -470,3 +470,13 @@ function! OpenTodo()
 endfunction
 
 command! -nargs=* OpenTodo call OpenTodo()
+
+
+" Function to select the entire buffer
+function! SelectEntireBuffer()
+  normal! gg0vG$
+endfunction
+
+" Map ae to select the entire buffer in visual and operator-pending mode
+xnoremap ae :<C-U>call SelectEntireBuffer()<CR>
+onoremap ae :<C-U>call SelectEntireBuffer()<CR>

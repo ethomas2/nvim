@@ -1,7 +1,7 @@
 local plugins = {
   {
     "jose-elias-alvarez/null-ls.nvim",
-    ft = {"python"},
+    ft = {"python", "typescriptreact", "javascriptreact", "typescript", "javascript"},
     opts = function()
       return require "custom.configs.null-ls"
     end,
@@ -90,19 +90,20 @@ local plugins = {
     'kana/vim-textobj-user',
     lazy = false,
   },
-  {
-    'kana/vim-textobj-entire',
-    lazy = false,
-  },
+  -- replaced with my own thing in vim
+  -- {
+  --   'kana/vim-textobj-entire',
+  --   lazy = false,
+  -- },
   {
     -- TODO: if there are problems with this load ethomas2/vim-indent-object
     'michaeljsmith/vim-indent-object',
     lazy = false,
   },
-  {
-    'glts/vim-textobj-comment',
-    lazy = false,
-  },
+  -- {
+  --   'glts/vim-textobj-comment',
+  --   lazy = false,
+  -- },
   {
     'wellle/targets.vim',
     lazy = false,
