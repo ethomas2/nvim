@@ -10,7 +10,7 @@ local opts = {
     null_ls.builtins.formatting.prettier.with({
    		filetypes = {
    			"typescriptreact", "javascriptreact", "javascript", "typescript",
-        "css", "scss", "html", "json", "yaml", "markdown", "graphql", "md",
+        "css", "scss", "html", "json", "yaml", "graphql", "md",
         "txt",
   		},
   	}),

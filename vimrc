@@ -232,7 +232,6 @@ xnoremap <leader>g "zy:exe "Rg ".@z.""<CR>
 let g:prettier#exec_cmd_path = "~/.config/yarn/global/node_modules/.bin/prettier"
 let g:prettier#exec_cmd_async = 1
 let g:prettier#autoformat = 0
-" autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.vue,*.yaml,*.html PrettierAsync
 
 nnoremap <C-B> :Buffers<CR>
 
@@ -466,7 +465,7 @@ function! OpenTodo()
     " silent execute 'tabedit ' . fnameescape(dirpath)
     " normal! R
     tabnew
-    execute 'NERDTree ' . dirpath
+    execute 'NvimTreeOpen ' . dirpath
 endfunction
 
 command! -nargs=* OpenTodo call OpenTodo()
