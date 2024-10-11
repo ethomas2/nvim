@@ -165,7 +165,7 @@ M.lspconfig = {
       "LSP signature help",
     },
 
-    ["<leader>D"] = {
+    ["gy"] = {
       function()
         vim.lsp.buf.type_definition()
       end,

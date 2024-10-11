@@ -16,3 +16,10 @@ lspconfig.tsserver.setup({
   capabilities = capabilities,
   filetypes = {"javascript", "typescript", "typescriptreact", "javascriptreact"},
 })
+
+-- Setup for Rust (rust-analyzer)
+lspconfig.rust_analyzer.setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+  filetypes = {"rust"},
+})

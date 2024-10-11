@@ -90,24 +90,23 @@ local plugins = {
     'kana/vim-textobj-user',
     lazy = false,
   },
-  -- replaced with my own thing in vim
-  -- {
-  --   'kana/vim-textobj-entire',
-  --   lazy = false,
-  -- },
   {
     -- TODO: if there are problems with this load ethomas2/vim-indent-object
-    'michaeljsmith/vim-indent-object',
+    -- 'michaeljsmith/vim-indent-object',
+    -- Consider the thing you put in my-files (copypasted vindent)
+    'jessekelighine/vindent.vim',
     lazy = false,
   },
   -- {
   --   'glts/vim-textobj-comment',
   --   lazy = false,
   -- },
-  {
-    'wellle/targets.vim',
-    lazy = false,
-  },
+
+  -- I think targets.vim might intervere with indent-object?
+  -- {
+  --   'wellle/targets.vim',
+  --   lazy = false,
+  -- },
   {
     'coderifous/textobj-word-column.vim',
     lazy = false,
@@ -144,7 +143,11 @@ local plugins = {
   {
     'kshenoy/vim-signature',
     lazy = false,
+  }, {
+    'jrop/jq.nvim',
+    lazy = false,
   }
+
 }
 
 return plugins
