@@ -147,7 +147,7 @@ local plugins = {
     'jrop/jq.nvim',
     lazy = false,
   }
-
 }
+
 
 return plugins
