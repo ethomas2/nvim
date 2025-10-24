@@ -139,3 +139,92 @@ local new_cmd = vim.api.nvim_create_user_command
 new_cmd("NvChadUpdate", function()
   require "nvchad.updater"()
 end, {})
+
+-- Zettlekasten and Obsidian Template Commands
+local zettle_dir = "/Users/evanthomas/notes/Main/Zettlekasten"
+local templates_dir = "/Users/evanthomas/notes/Main/Templates"
+
+-- Helper functions for template rendering
+local function str_split_lines(s)
+  local t = {}
+  for line in (s.."\n"):gmatch("([^\n]*)\n") do
+    table.insert(t, line)
+  end
+  return t
+end
+
+local function obsidian_to_strftime(fmt)
+  -- Convert Obsidian-like tokens to Lua os.date codes
+  -- Supports: YYYY, MM, DD, HH, mm, ss
+  local map = { YYYY = "%%Y", MM = "%%m", DD = "%%d", HH = "%%H", mm = "%%M", ss = "%%S" }
+  -- Replace longest first to avoid overlaps
+  fmt = fmt:gsub("YYYY", map.YYYY)
+           :gsub("HH",   map.HH)
+           :gsub("MM",   map.MM)
+           :gsub("DD",   map.DD)
+           :gsub("mm",   map.mm)
+           :gsub("ss",   map.ss)
+  return fmt
+end
+
+local function render_template_text(text)
+  -- {{title}} => current buffer file stem
+  local title = vim.fn.expand("%:t:r")
+  if title == "" then
+    -- fallback to buffer name or "Untitled"
+    title = vim.fn.bufname("%"):match("([^/]+)%.%w+$") or "Untitled"
+  end
+  text = text:gsub("{{title}}", title)
+
+  -- {{date:...}} => format with os.date
+  -- e.g. {{date:YYYY-MM-DD}} or {{date:HH:mm}}
+  text = text:gsub("{{date:([^}]+)}}", function(fmt)
+    local lf = obsidian_to_strftime(fmt)
+    return os.date(lf)
+  end)
+
+  return text
+end
+
+-- NewZettle command
+new_cmd("NewZettle", function(opts)
+  local filename = opts.args
+  if filename == "" then
+    vim.notify("Usage: :NewZettle <filename>", vim.log.levels.ERROR)
+    return
+  end
+  local path = zettle_dir .. "/" .. filename
+  vim.fn.mkdir(vim.fn.fnamemodify(path, ":h"), "p")
+  vim.cmd("edit " .. vim.fn.fnameescape(path))
+end, { nargs = 1, complete = "file" })
+
+-- ObsidianTemplate command
+new_cmd("ObsidianTemplate", function(opts)
+  local template = opts.args
+  if template == "" then
+    vim.notify("Usage: :ObsidianTemplate <template>", vim.log.levels.ERROR)
+    return
+  end
+
+  local template_path = templates_dir .. "/" .. template
+  if not template_path:match("%.md$") then
+    template_path = template_path .. ".md"
+  end
+
+  if vim.fn.filereadable(template_path) == 0 then
+    vim.notify("Template not found: " .. template_path, vim.log.levels.ERROR)
+    return
+  end
+
+  local raw = table.concat(vim.fn.readfile(template_path), "\n")
+  local rendered = render_template_text(raw)
+
+  -- Append to end of current buffer (preserve a separating newline if needed)
+  local bufnr = 0
+  local last = vim.api.nvim_buf_line_count(bufnr)
+  local existing = vim.api.nvim_buf_get_lines(bufnr, last-1, last, false)[1] or ""
+  local lines = str_split_lines(((existing ~= "" and not existing:match("^%s*$")) and ("\n"..rendered) or rendered))
+
+  vim.api.nvim_buf_set_lines(bufnr, last, last, false, lines)
+  vim.notify("Inserted rendered template: " .. template, vim.log.levels.INFO)
+end, { nargs = 1, complete = "file" })
