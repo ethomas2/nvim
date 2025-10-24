@@ -1,9 +1,9 @@
 local plugins = {
   {
-    "jose-elias-alvarez/null-ls.nvim",
+    "nvimtools/none-ls.nvim",
     ft = {"python", "typescriptreact", "javascriptreact", "typescript", "javascript"},
     opts = function()
-      return require "custom.configs.null-ls"
+      return require "custom.configs.none-ls"
     end,
   },
   {
@@ -53,7 +53,6 @@ local plugins = {
    'https://github.com/altercation/vim-colors-solarized',
    lazy = false,
   },
-
   {
     'lifepillar/pgsql.vim',
     lazy = false,

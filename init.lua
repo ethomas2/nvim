@@ -30,3 +30,23 @@ vim.cmd('source ' .. config_path .. 'run.vim')
 vim.cmd('source ' .. config_path .. 'snippets.vim')
 vim.cmd('source ' .. config_path .. 'windowsAndTabs.vim')
 vim.cmd('source ' .. config_path .. 'tabnames.vim')
+
+
+-- Source local.lua once at startup if present
+local startup_local = vim.fn.getcwd() .. "/local.lua"
+if vim.fn.filereadable(startup_local) == 1 then
+  vim.cmd("source " .. vim.fn.fnameescape(startup_local))
+end
+
+
+-- Automatically reload local.lua on save
+vim.api.nvim_create_autocmd("BufWritePost", {
+  pattern = "local.lua",
+  callback = function(args)
+    local path = args.file
+    if vim.fn.filereadable(path) == 1 then
+      vim.cmd("source " .. vim.fn.fnameescape(path))
+      vim.notify("🔁 Reloaded " .. path, vim.log.levels.INFO)
+    end
+  end,
+})

@@ -11,8 +11,9 @@ lspconfig.pyright.setup({
   capabilities = capabilities,
   filetypes = {"python"},
 })
--- Setup lspconfig for TypeScript (tsserver)
-lspconfig.tsserver.setup({
+
+-- TypeScript / JavaScript
+lspconfig.ts_ls.setup({
   on_attach = on_attach,
   capabilities = capabilities,
   filetypes = {"javascript", "typescript", "typescriptreact", "javascriptreact"},
