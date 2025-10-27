@@ -24,10 +24,10 @@ local plugins = {
 
   -- Translated plugins from vim-plug
    -- GitHub Copilot
-  {
-      'github/copilot.vim',
-      lazy = false,
-  },
+  -- {
+  --     'github/copilot.vim',
+  --     lazy = false,
+  -- },
   -- FZF and FZF.vim
   {
       'junegunn/fzf',
@@ -145,6 +145,22 @@ local plugins = {
   }, {
     'jrop/jq.nvim',
     lazy = false,
+  },
+  {
+    'alduraibi/telescope-glyph.nvim',
+    dependencies = { 'nvim-telescope/telescope.nvim' },
+    lazy = false,
+    config = function()
+      require('telescope').load_extension('glyph')
+    end,
+  },
+  {
+    'xiyaowong/telescope-emoji.nvim',
+    dependencies = { 'nvim-telescope/telescope.nvim' },
+    lazy = false,
+    config = function()
+      require('telescope').load_extension('emoji')
+    end,
   }
 }
 
