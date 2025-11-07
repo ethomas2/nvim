@@ -50,3 +50,13 @@ vim.api.nvim_create_autocmd("BufWritePost", {
     end
   end,
 })
+
+
+
+-- Diff configuration - set diff options
+vim.opt.diffopt:append("internal")
+vim.opt.diffopt:append("algorithm:histogram")
+vim.opt.diffopt:append("iwhiteall")
+
+-- Load diff color scheme manager
+require("custom.diff_colors")
