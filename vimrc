@@ -440,6 +440,8 @@ endfunction
 
 command! -nargs=* OpenThoughts call OpenThoughts()
 
+command! -nargs=0 OpenNotes :FZF ~/notes/
+
 function! OpenTodo()
     let last_friday_date = luaeval("get_last_friday()")
     let next_thursday_date = luaeval("get_next_thursday()")
