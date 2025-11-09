@@ -223,6 +223,12 @@ command! -nargs=* -complete=dir Rg
 command! -bang -nargs=* Lines
   \ call fzf#vim#lines(<q-args>, fzf#vim#with_preview('right:35%'))
 
+command! -bang -nargs=* SearchNotes
+  \ call fzf#vim#grep(
+  \   "rg --column --line-number --no-heading --smart-case --hidden --color=always ".<q-args>." ~/notes", 1,
+  \ fzf#vim#with_preview('right:35%'),
+  \ )
+
 " Immediately trigger a search for the current keyword if there is one
 nnoremap <expr> <leader>g (expand("<cword>") ==? "") ? ":Rg " : ":Rg '\\b\<C-r>\<C-w>\\b'<CR>"
 
