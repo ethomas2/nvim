@@ -81,7 +81,7 @@ M.capabilities.textDocument.completion.completionItem = {
   },
 }
 
-require("lspconfig").lua_ls.setup {
+vim.lsp.config('lua_ls', {
   on_init = M.on_init,
   on_attach = M.on_attach,
   capabilities = M.capabilities,
@@ -103,6 +103,8 @@ require("lspconfig").lua_ls.setup {
       },
     },
   },
-}
+})
+
+vim.lsp.enable('lua_ls')
 
 return M
