@@ -24,10 +24,10 @@ local plugins = {
 
   -- Translated plugins from vim-plug
    -- GitHub Copilot
-  -- {
-  --     'github/copilot.vim',
-  --     lazy = false,
-  -- },
+  {
+      'github/copilot.vim',
+      lazy = false,
+  },
   -- FZF and FZF.vim
   {
       'junegunn/fzf',
