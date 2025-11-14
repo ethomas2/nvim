@@ -1,0 +1,164 @@
+/*
+GitHub Light theme for highlight.js
+Vibrant colors for better readability
+*/
+
+:root {
+    --color-text-primary: #24292f;
+    --color-bg: #ffffff;
+}
+
+[data-theme="light"] {
+    --color-text-primary: #24292f;
+}
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  color: #24292f;
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #d0d7de;
+}
+
+/* Comments */
+.hljs-comment,
+.hljs-quote {
+  color: #6e7781;
+  font-style: italic;
+}
+
+/* Keywords */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: #cf222e;
+  font-weight: normal;
+}
+
+/* Numbers, literals */
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+  color: #0550ae;
+}
+
+/* Strings */
+.hljs-string,
+.hljs-doctag {
+  color: #0a3069;
+}
+
+/* Titles, sections */
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: #8250df;
+  font-weight: bold;
+}
+
+.hljs-subst {
+  font-weight: normal;
+}
+
+/* Types, classes */
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #953800;
+  font-weight: bold;
+}
+
+/* Tags, names, attributes */
+.hljs-tag,
+.hljs-name,
+.hljs-attribute {
+  color: #116329;
+  font-weight: normal;
+}
+
+/* Regexp, links */
+.hljs-regexp,
+.hljs-link {
+  color: #0a3069;
+}
+
+/* Symbols, bullets */
+.hljs-symbol,
+.hljs-bullet {
+  color: #953800;
+}
+
+/* Built-ins */
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #953800;
+}
+
+/* Meta */
+.hljs-meta {
+  color: #6e7781;
+  font-weight: bold;
+}
+
+/* Deletion */
+.hljs-deletion {
+  background: #ffebe9;
+  color: #82071e;
+}
+
+/* Addition */
+.hljs-addition {
+  background: #dafbe1;
+  color: #116329;
+}
+
+/* Emphasis */
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+/* Python specific */
+.hljs-function,
+.hljs-title.function_ {
+  color: #8250df;
+}
+
+.hljs-params {
+  color: #24292f;
+}
+
+/* JavaScript/TypeScript specific */
+.hljs-property {
+  color: #0550ae;
+}
+
+.hljs-attr {
+  color: #0550ae;
+}
+
+/* JSON */
+.hljs-attr {
+  color: #116329;
+}
+
+.hljs-string {
+  color: #0a3069;
+}
+
+/* Shell/Bash */
+.hljs-shebang {
+  color: #6e7781;
+}
+
+/* Markdown code blocks */
+code.hljs {
+  padding: 1em;
+  border-radius: 6px;
+}
