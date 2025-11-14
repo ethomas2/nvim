@@ -6,6 +6,11 @@ M.ui = {
   tabufline = {
     enabled= false
   },
+  statusline = {
+    overriden_modules = function(modules)
+      table.insert(modules, " Ln %l, Col %c")
+    end,
+  },
   -- Override diff highlight groups to add background colors
   hl_override = {
     DiffAdd = {
