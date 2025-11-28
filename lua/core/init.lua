@@ -251,15 +251,91 @@ local function render_template_text(text)
   return text
 end
 
+-- Helper function to show floating window input
+local function floating_input(prompt, callback)
+  local width = math.max(50, #prompt + 20)
+  local height = 1
 
--- ObsidianTemplate command
-new_cmd("ObsidianTemplate", function(opts)
-  local template = opts.args
-  if template == "" then
-    vim.notify("Usage: :ObsidianTemplate <template>", vim.log.levels.ERROR)
-    return
+  -- Create a scratch buffer
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_buf_set_option(buf, "buftype", "")
+  vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
+  vim.api.nvim_buf_set_option(buf, "filetype", "")
+
+  -- Set initial content with prompt
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, { prompt })
+
+  -- Calculate window position (centered)
+  local ui = vim.api.nvim_list_uis()[1]
+  local win_width = ui.width
+  local win_height = ui.height
+  local col = math.floor((win_width - width) / 2)
+  local row = math.floor((win_height - height) / 2)
+
+  -- Create floating window
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = "editor",
+    width = width,
+    height = height,
+    col = col,
+    row = row,
+    style = "minimal",
+    border = "rounded",
+  })
+
+  -- Set up keymaps
+  local function on_confirm()
+    local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+    local input = lines[1] or ""
+    -- Remove prompt prefix if present
+    if input:sub(1, #prompt) == prompt then
+      input = input:sub(#prompt + 1)
+    end
+    input = input:match("^%s*(.-)%s*$") -- Trim whitespace
+    -- Mark buffer as not modified before closing
+    vim.api.nvim_buf_set_option(buf, "modified", false)
+    vim.api.nvim_win_close(win, true)
+    if input ~= "" then
+      callback(input)
+    end
   end
 
+  -- Prevent deleting the prompt
+  vim.api.nvim_buf_set_keymap(buf, "i", "<Home>", "", {
+    callback = function()
+      vim.api.nvim_win_set_cursor(win, {1, #prompt})
+    end,
+  })
+
+  vim.api.nvim_buf_set_keymap(buf, "i", "<CR>", "", {
+    callback = on_confirm,
+  })
+
+  vim.api.nvim_buf_set_keymap(buf, "n", "<CR>", "", {
+    callback = on_confirm,
+  })
+
+  vim.api.nvim_buf_set_keymap(buf, "i", "<Esc>", "", {
+    callback = function()
+      vim.api.nvim_buf_set_option(buf, "modified", false)
+      vim.api.nvim_win_close(win, true)
+    end,
+  })
+
+  vim.api.nvim_buf_set_keymap(buf, "n", "<Esc>", "", {
+    callback = function()
+      vim.api.nvim_buf_set_option(buf, "modified", false)
+      vim.api.nvim_win_close(win, true)
+    end,
+  })
+
+  -- Move cursor to end of prompt and start insert mode
+  vim.api.nvim_win_set_cursor(win, {1, #prompt})
+  vim.cmd("startinsert")
+end
+
+-- Function to execute ObsidianTemplate with template name
+local function execute_obsidian_template(template)
   local template_path = templates_dir .. "/" .. template
   if not template_path:match("%.md$") then
     template_path = template_path .. ".md"
@@ -281,4 +357,20 @@ new_cmd("ObsidianTemplate", function(opts)
 
   vim.api.nvim_buf_set_lines(bufnr, last, last, false, lines)
   vim.notify("Inserted rendered template: " .. template, vim.log.levels.INFO)
-end, { nargs = 1, complete = "file" })
+end
+
+-- ObsidianTemplate command
+new_cmd("ObsidianTemplate", function(opts)
+  local template = opts.args
+  if template == "" then
+    -- No arg provided, show floating window
+    floating_input("", function(input)
+      if input ~= "" then
+        execute_obsidian_template(input)
+      end
+    end)
+  else
+    -- Arg provided, execute directly
+    execute_obsidian_template(template)
+  end
+end, { nargs = "?", complete = "file" })
