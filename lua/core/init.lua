@@ -140,6 +140,72 @@ new_cmd("NvChadUpdate", function()
   require "nvchad.updater"()
 end, {})
 
+-- Reload config command (untested
+-- new_cmd("ReloadConfig", function()
+--   local config_path = vim.fn.stdpath("config")
+
+--   -- Function to find all files that need to be reloaded
+--   local function find_files_to_reload()
+--     local files = {}
+
+--     -- Find all Lua modules
+--     local lua_dirs = { "core", "custom", "plugins" }
+--     for _, dir in ipairs(lua_dirs) do
+--       local lua_files = vim.fn.glob(config_path .. "/lua/" .. dir .. "/**/*.lua", true, true)
+--       for _, file in ipairs(lua_files) do
+--         -- Convert file path to module name
+--         local module = file:gsub(config_path .. "/lua/", ""):gsub("%.lua$", ""):gsub("/", ".")
+--         if module ~= "core.init" then -- Don't reload core.init while we're in it
+--           table.insert(files, { type = "lua_module", path = module })
+--         end
+--       end
+--     end
+
+--     -- Add vimrc
+--     table.insert(files, { type = "vimrc", path = "~/.config/nvim/vimrc" })
+
+--     -- Add vim-files
+--     local vim_files = { "header.vim", "remaps.vim", "run.vim", "snippets.vim", "windowsAndTabs.vim", "tabnames.vim" }
+--     for _, vim_file in ipairs(vim_files) do
+--       table.insert(files, { type = "vim_file", path = config_path .. "/vim-files/" .. vim_file })
+--     end
+
+--     -- Add custom init if it exists
+--     local custom_init_path = vim.api.nvim_get_runtime_file("lua/custom/init.lua", false)[1]
+--     if custom_init_path then
+--       table.insert(files, { type = "custom_init", path = custom_init_path })
+--     end
+
+--     return files
+--   end
+
+--   -- Function to process each file
+--   local function process_file(file_info)
+--     if file_info.type == "lua_module" then
+--       local reload = require("plenary.reload").reload_module
+--       pcall(reload, file_info.path)
+--       pcall(require, file_info.path)
+--     elseif file_info.type == "vimrc" or file_info.type == "vim_file" then
+--       vim.cmd("source " .. vim.fn.fnameescape(file_info.path))
+--     elseif file_info.type == "custom_init" then
+--       local reload = require("plenary.reload").reload_module
+--       pcall(reload, "custom.init")
+--       dofile(file_info.path)
+--     end
+--   end
+
+--   -- Find and process all files
+--   local files = find_files_to_reload()
+--   for _, file_info in ipairs(files) do
+--     process_file(file_info)
+--   end
+
+--   -- Reload mappings after all modules are reloaded
+--   require("core.utils").load_mappings()
+
+--   vim.notify("Config reloaded!", vim.log.levels.INFO)
+-- end, {})
+
 -- Obsidian Template Commands
 local templates_dir = "/Users/evanthomas/notes/Main/Templates"
 
