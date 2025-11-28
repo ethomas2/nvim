@@ -140,8 +140,7 @@ new_cmd("NvChadUpdate", function()
   require "nvchad.updater"()
 end, {})
 
--- Zettlekasten and Obsidian Template Commands
-local zettle_dir = "/Users/evanthomas/notes/Main/Zettlekasten"
+-- Obsidian Template Commands
 local templates_dir = "/Users/evanthomas/notes/Main/Templates"
 
 -- Helper functions for template rendering
@@ -186,17 +185,6 @@ local function render_template_text(text)
   return text
 end
 
--- NewZettle command
-new_cmd("NewZettle", function(opts)
-  local filename = opts.args
-  if filename == "" then
-    vim.notify("Usage: :NewZettle <filename>", vim.log.levels.ERROR)
-    return
-  end
-  local path = zettle_dir .. "/" .. filename
-  vim.fn.mkdir(vim.fn.fnamemodify(path, ":h"), "p")
-  vim.cmd("edit " .. vim.fn.fnameescape(path))
-end, { nargs = 1, complete = "file" })
 
 -- ObsidianTemplate command
 new_cmd("ObsidianTemplate", function(opts)

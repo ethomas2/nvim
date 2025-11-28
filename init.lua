@@ -60,3 +60,6 @@ vim.opt.diffopt:append("iwhiteall")
 
 -- Load diff color scheme manager
 require("custom.diff_colors")
+
+-- Load NewZettle command
+require("custom.newzettle")
