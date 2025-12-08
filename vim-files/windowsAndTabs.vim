@@ -33,3 +33,5 @@ nnoremap <C-w>e <C-w>T
 "C-w H move buffer to left
 "C-w K move buffer to up ... etc
 "C-w r rotate windows
+
+" Window titles are now handled by lua/custom/window_titles.lua

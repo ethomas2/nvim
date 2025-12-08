@@ -236,7 +236,11 @@ local plugins = {
       vim.g.mkdp_filetypes = { 'markdown' }
       vim.g.mkdp_theme = 'light'
     end,
-  }
+  },
+  {
+    'Myzel394/easytables.nvim',
+    lazy = false,
+  },
 }
 
 

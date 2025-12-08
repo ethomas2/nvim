@@ -63,3 +63,6 @@ require("custom.diff_colors")
 
 -- Load NewZettle command
 require("custom.newzettle")
+
+-- Load window titles configuration
+require("custom.window_titles")
