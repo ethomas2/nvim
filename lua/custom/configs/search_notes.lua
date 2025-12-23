@@ -200,7 +200,7 @@ M.search_notes = function()
   end
 
   -- Helper function to create a new file with .md extension (for Ctrl+C)
-  local function create_new_file_from_prompt(prompt_text)
+  local function create_new_file_from_prompt(prompt_text, template)
     if prompt_text and prompt_text ~= "" then
       -- Add .md extension if not present
       if not prompt_text:match("%.md$") and not prompt_text:match("%.markdown$") then
@@ -224,11 +224,18 @@ M.search_notes = function()
       end
       
       vim.cmd("edit " .. vim.fn.fnameescape(file_path))
+      
+      -- Execute template if selected and not "none"
+      if template and template ~= "none" then
+        vim.cmd("ObsidianTemplate " .. template)
+      end
     end
   end
 
   telescope.find_files({
     cwd = notes_dir,
+    prompt_prefix = "    ",
+    results_title = "Notes Files  |  Press C-c to create new file in Zettlekasten",
     attach_mappings = function(prompt_bufnr, map)
       -- Override the default select action (Enter key)
       map("i", "<CR>", function()
@@ -315,7 +322,7 @@ M.search_notes = function()
         end
       end)
       
-      -- Ctrl+C: Create new file from typed text with .md extension
+      -- Ctrl+C: Create new file from typed text with template selection
       map("i", "<C-c>", function()
         local current_picker = action_state.get_current_picker(prompt_bufnr)
         local prompt_text = get_prompt_text(current_picker)
@@ -323,7 +330,9 @@ M.search_notes = function()
         actions.close(prompt_bufnr)
         
         if prompt_text ~= "" then
-          create_new_file_from_prompt(prompt_text)
+          show_template_picker(prompt_text, function(template)
+            create_new_file_from_prompt(prompt_text, template)
+          end)
         end
       end)
       
@@ -334,7 +343,9 @@ M.search_notes = function()
         actions.close(prompt_bufnr)
         
         if prompt_text ~= "" then
-          create_new_file_from_prompt(prompt_text)
+          show_template_picker(prompt_text, function(template)
+            create_new_file_from_prompt(prompt_text, template)
+          end)
         end
       end)
       
