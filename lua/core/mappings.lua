@@ -31,7 +31,12 @@ M.general = {
 
     -- line numbers
     ["<leader>rn"] = { "<cmd> set rnu! <CR>", "Toggle relative number" },
-    ["<leader>n"] = { "<cmd> OpenNotes <CR>", "Open notes" },
+    ["<leader>n"] = {
+      function()
+        require("custom.configs.search_notes").search_notes()
+      end,
+      "Search notes",
+    },
 
     -- Allow moving the cursor through wrapped lines with j, k, <Up> and <Down>
     -- http://www.reddit.com/r/vim/comments/2k4cbr/problem_with_gj_and_gk/

@@ -351,9 +351,27 @@ local function execute_obsidian_template(template)
 
   -- Append to end of current buffer (preserve a separating newline if needed)
   local bufnr = 0
-  local last = vim.api.nvim_buf_line_count(bufnr)
+  local line_count = vim.api.nvim_buf_line_count(bufnr)
+  local lines = str_split_lines(rendered)
+  
+  -- If buffer is empty (just one blank line), replace it instead of appending
+  if line_count == 1 then
+    local first_line = vim.api.nvim_buf_get_lines(bufnr, 0, 1, false)[1] or ""
+    if first_line == "" or first_line:match("^%s*$") then
+      -- Replace the empty line with template content
+      vim.api.nvim_buf_set_lines(bufnr, 0, 1, false, lines)
+      vim.notify("Inserted rendered template: " .. template, vim.log.levels.INFO)
+      return
+    end
+  end
+  
+  -- Otherwise append to end (preserve a separating newline if needed)
+  local last = line_count
   local existing = vim.api.nvim_buf_get_lines(bufnr, last-1, last, false)[1] or ""
-  local lines = str_split_lines(((existing ~= "" and not existing:match("^%s*$")) and ("\n"..rendered) or rendered))
+  if existing ~= "" and not existing:match("^%s*$") then
+    -- Add newline separator before template
+    lines = str_split_lines("\n" .. rendered)
+  end
 
   vim.api.nvim_buf_set_lines(bufnr, last, last, false, lines)
   vim.notify("Inserted rendered template: " .. template, vim.log.levels.INFO)

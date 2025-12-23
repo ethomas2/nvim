@@ -29,7 +29,7 @@ local plugins = {
       local default_opts = require "plugins.configs.treesitter"
       -- Create a copy to avoid mutating the original
       local opts = vim.deepcopy(default_opts)
-      
+
       -- Merge ensure_installed with markdown parsers and other common languages
       local base_langs = opts.ensure_installed or {}
       local additional_langs = { "markdown", "markdown_inline", "python", "javascript", "typescript", "bash", "json", "yaml", "lua", "vim", "vimdoc" }
@@ -47,23 +47,23 @@ local plugins = {
         table.insert(merged_langs, lang)
       end
       opts.ensure_installed = merged_langs
-      
+
       -- Ensure highlight is enabled with proper settings
       opts.highlight = opts.highlight or {}
       opts.highlight.enable = true
       opts.highlight.use_languagetree = true
       opts.highlight.additional_vim_regex_highlighting = false
-      
+
       return opts
     end,
   },
 
   -- Translated plugins from vim-plug
    -- GitHub Copilot
-  {
-      'github/copilot.vim',
-      lazy = false,
-  },
+  -- {
+  --     'github/copilot.vim',
+  --     lazy = false,
+  -- },
   -- FZF and FZF.vim
   {
       'junegunn/fzf',
@@ -240,6 +240,11 @@ local plugins = {
   {
     'Myzel394/easytables.nvim',
     lazy = false,
+  },
+  -- attempt to add image support. Not working right now
+  {
+    "https://github.com/3rd/image.nvim",
+    opts = {},
   },
 }
 
