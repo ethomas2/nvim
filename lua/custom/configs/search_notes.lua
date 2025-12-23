@@ -199,6 +199,34 @@ M.search_notes = function()
     end
   end
 
+  -- Helper function to create a new file with .md extension (for Ctrl+C)
+  local function create_new_file_from_prompt(prompt_text)
+    if prompt_text and prompt_text ~= "" then
+      -- Add .md extension if not present
+      if not prompt_text:match("%.md$") and not prompt_text:match("%.markdown$") then
+        prompt_text = prompt_text .. ".md"
+      end
+      
+      -- Ensure zettlekasten_dir is expanded
+      local expanded_zettlekasten_dir = vim.fn.expand("~/notes/Main/Zettlekasten")
+      
+      -- Build file path relative to zettlekasten_dir
+      local file_path = expanded_zettlekasten_dir .. "/" .. prompt_text
+      file_path = vim.fn.expand(file_path)
+      
+      -- Create file if it doesn't exist
+      if vim.fn.filereadable(file_path) == 0 then
+        -- Ensure Zettlekasten directory exists
+        if vim.fn.isdirectory(expanded_zettlekasten_dir) == 0 then
+          vim.fn.mkdir(expanded_zettlekasten_dir, "p")
+        end
+        vim.fn.writefile({}, file_path)
+      end
+      
+      vim.cmd("edit " .. vim.fn.fnameescape(file_path))
+    end
+  end
+
   telescope.find_files({
     cwd = notes_dir,
     attach_mappings = function(prompt_bufnr, map)
@@ -284,6 +312,29 @@ M.search_notes = function()
           show_template_picker(prompt_text, function(template)
             create_zettlekasten_file(prompt_text, template)
           end)
+        end
+      end)
+      
+      -- Ctrl+C: Create new file from typed text with .md extension
+      map("i", "<C-c>", function()
+        local current_picker = action_state.get_current_picker(prompt_bufnr)
+        local prompt_text = get_prompt_text(current_picker)
+        
+        actions.close(prompt_bufnr)
+        
+        if prompt_text ~= "" then
+          create_new_file_from_prompt(prompt_text)
+        end
+      end)
+      
+      map("n", "<C-c>", function()
+        local current_picker = action_state.get_current_picker(prompt_bufnr)
+        local prompt_text = get_prompt_text(current_picker)
+        
+        actions.close(prompt_bufnr)
+        
+        if prompt_text ~= "" then
+          create_new_file_from_prompt(prompt_text)
         end
       end)
       
