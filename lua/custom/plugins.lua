@@ -1,4 +1,9 @@
 local plugins = {
+  -- Disable colorizer plugin (prevents color names like "red", "blue", "green" from being highlighted)
+  {
+    "NvChad/nvim-colorizer.lua",
+    enabled = false,
+  },
   {
     "nvimtools/none-ls.nvim",
     ft = {"python", "typescriptreact", "javascriptreact", "typescript", "javascript"},
