@@ -23,6 +23,9 @@ local opts = {
         "css", "scss", "html", "json", "yaml", "graphql", "md", "txt",
       },
     }),
+
+    -- Rust
+    null_ls.builtins.formatting.rustfmt,
   },
 
   on_attach = function(client, bufnr)
