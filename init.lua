@@ -66,3 +66,6 @@ require("custom.newzettle")
 
 -- Load window titles configuration
 require("custom.window_titles")
+
+-- Load GPG encryption/decryption commands
+require("custom.gpg_crypt").setup()
