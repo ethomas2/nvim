@@ -62,67 +62,44 @@ end
 function M.decrypt_selection()
   -- Get visual selection using built-in function
   local lines = vim.fn.getregion(vim.fn.getpos("'<"), vim.fn.getpos("'>"), { type = vim.fn.visualmode() })
-
   if #lines == 0 then
     vim.notify('No text selected', vim.log.levels.WARN)
     return
   end
-
-  local ciphertext = table.concat(lines, '\n')
-
-  -- Remove all whitespace and newlines from ciphertext (base64 can span multiple lines)
-  ciphertext = ciphertext:gsub('%s+', '')
+  local ciphertext_b64 = table.concat(lines, '\n')
+  ciphertext_b64 = ciphertext_b64:gsub('%s+', '')
 
   -- Get passphrase using inputsecret
   local passphrase = get_passphrase()
-
   if not passphrase or passphrase == '' then
     vim.notify('Decryption cancelled: no passphrase provided', vim.log.levels.WARN)
     return
   end
 
-  -- Write ciphertext to temp file for base64 decode
-  local temp_cipher = os.tmpname()
-  local f = io.open(temp_cipher, 'w')
-  f:write(ciphertext)
-  f:close()
-
-  -- Base64 decode
-  local temp_decoded = os.tmpname()
-  local base64_cmd = string.format('base64 -d < %s > %s 2>&1',
-    vim.fn.shellescape(temp_cipher),
-    vim.fn.shellescape(temp_decoded))
-
-  local base64_handle = io.popen(base64_cmd)
-  local base64_output = base64_handle:read('*a')
-  local base64_success = base64_handle:close()
-
-  -- Check if base64 decode succeeded
-  local decoded_file = io.open(temp_decoded, 'r')
-  if not decoded_file then
-    os.remove(temp_cipher)
-    vim.notify('Base64 decode failed: ' .. base64_output, vim.log.levels.ERROR)
+  -- Step 1: Base64 decode (binary mode, stdin -> stdout)
+  local b64_proc_handle = vim.system({ 'base64', '-d' }, { stdin = ciphertext_b64, text = false }):wait()
+  if b64_proc_handle.code ~= 0 or b64_proc_handle.stdout == '' then
+    vim.notify('Base64 decode failed: ' .. (b64_proc_handle.stderr or 'unknown error'), vim.log.levels.ERROR)
     return
   end
-  decoded_file:close()
+  local ciphertext_raw = b64_proc_handle.stdout
 
-  -- GPG decrypt
-  local gpg_cmd = string.format(
-    'gpg --batch --passphrase %s --no-symkey-cache -d < %s 2>&1',
-    vim.fn.shellescape(passphrase),
-    vim.fn.shellescape(temp_decoded)
-  )
+  -- Step 2: GPG decrypt (binary mode, pass decoded data via stdin)
+  local gpg_result = vim.system(
+    { 'gpg', '--batch', '--passphrase', passphrase, '--no-symkey-cache', '-d' },
+    { stdin = ciphertext_raw, text = false }
+  ):wait()
 
-  local gpg_handle = io.popen(gpg_cmd)
-  local plaintext = gpg_handle:read('*a')
-  local gpg_success = gpg_handle:close()
+  if gpg_result.code ~= 0 then
+    local error_msg = gpg_result.stderr or gpg_result.stdout or 'unknown error'
+    vim.notify('Decryption failed: ' .. error_msg, vim.log.levels.ERROR)
+    return
+  end
 
-  -- Clean up temp files
-  os.remove(temp_cipher)
-  os.remove(temp_decoded)
+  local plaintext = gpg_result.stdout
 
-  if not gpg_success or plaintext == '' then
-    vim.notify('Decryption failed: ' .. plaintext, vim.log.levels.ERROR)
+  if plaintext == '' then
+    vim.notify('Decryption failed: empty output', vim.log.levels.ERROR)
     return
   end
 
