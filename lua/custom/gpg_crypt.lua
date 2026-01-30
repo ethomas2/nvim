@@ -9,28 +9,18 @@ end
 
 -- Encrypt selected text
 function M.encrypt_selection()
-  -- Get visual selection
+  -- Get visual selection marks
   local start_pos = vim.fn.getpos("'<")
   local end_pos = vim.fn.getpos("'>")
   local start_line = start_pos[2]
   local end_line = end_pos[2]
-  local start_col = start_pos[3]
-  local end_col = end_pos[3]
 
-  -- Get selected text
-  local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
+  -- Get visual selection using built-in function
+  local lines = vim.fn.getregion(start_pos, end_pos, { type = vim.fn.visualmode() })
 
   if #lines == 0 then
     vim.notify('No text selected', vim.log.levels.WARN)
     return
-  end
-
-  -- Handle single line or multi-line selection
-  if #lines == 1 then
-    lines[1] = lines[1]:sub(start_col, end_col)
-  else
-    lines[1] = lines[1]:sub(start_col)
-    lines[#lines] = lines[#lines]:sub(1, end_col)
   end
 
   local plaintext = table.concat(lines, '\n')
@@ -68,30 +58,14 @@ function M.encrypt_selection()
   vim.notify('Text encrypted successfully', vim.log.levels.INFO)
 end
 
--- Decrypt selected text and show in messages
-function M.decrypt_selection()
-  -- Get visual selection
-  local start_pos = vim.fn.getpos("'<")
-  local end_pos = vim.fn.getpos("'>")
-  local start_line = start_pos[2]
-  local end_line = end_pos[2]
-  local start_col = start_pos[3]
-  local end_col = end_pos[3]
 
-  -- Get selected text
-  local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
+function M.decrypt_selection()
+  -- Get visual selection using built-in function
+  local lines = vim.fn.getregion(vim.fn.getpos("'<"), vim.fn.getpos("'>"), { type = vim.fn.visualmode() })
 
   if #lines == 0 then
     vim.notify('No text selected', vim.log.levels.WARN)
     return
-  end
-
-  -- Handle single line or multi-line selection
-  if #lines == 1 then
-    lines[1] = lines[1]:sub(start_col, end_col)
-  else
-    lines[1] = lines[1]:sub(start_col)
-    lines[#lines] = lines[#lines]:sub(1, end_col)
   end
 
   local ciphertext = table.concat(lines, '\n')
