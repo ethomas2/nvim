@@ -99,6 +99,11 @@ function M.decrypt_selection()
   -- Remove all whitespace and newlines from ciphertext (base64 can span multiple lines)
   ciphertext = ciphertext:gsub('%s+', '')
 
+  print('[DEBUG] Step 1: Ciphertext from selection')
+  print('[DEBUG] Ciphertext: ', ciphertext)
+  print('[DEBUG] First 50 chars: ' .. ciphertext:sub(1, 50))
+  print('[DEBUG] Last 50 chars: ' .. ciphertext:sub(-50))
+
   -- Get passphrase using inputsecret
   local passphrase = get_passphrase()
 
@@ -107,25 +112,77 @@ function M.decrypt_selection()
     return
   end
 
-  -- Decrypt using GPG (passphrase never touches disk)
-  -- Note: shellescape adds quotes, so don't add manual quotes
-  local cmd = string.format(
-    'echo -n %s | base64 -d | gpg --batch --passphrase %s --no-symkey-cache -d 2>/dev/null',
-    vim.fn.shellescape(ciphertext),
-    vim.fn.shellescape(passphrase)
+  print('[DEBUG] Step 2: Passphrase received')
+  print('[DEBUG] Passphrase length: ' .. #passphrase)
+
+  -- Step 1: Write ciphertext to temp file for base64 decode
+  local temp_cipher = os.tmpname()
+  local f = io.open(temp_cipher, 'w')
+  f:write(ciphertext)
+  f:close()
+
+  print('[DEBUG] Step 3: Wrote ciphertext to temp file: ' .. temp_cipher)
+
+  -- Step 2: Base64 decode
+  local temp_decoded = os.tmpname()
+  local base64_cmd = string.format('base64 -d < %s > %s 2>&1',
+    vim.fn.shellescape(temp_cipher),
+    vim.fn.shellescape(temp_decoded))
+
+  print('[DEBUG] Step 4: Running base64 decode')
+  print('[DEBUG] Command: ' .. base64_cmd)
+
+  local base64_handle = io.popen(base64_cmd)
+  local base64_output = base64_handle:read('*a')
+  local base64_success = base64_handle:close()
+
+  if base64_output ~= '' then
+    print('[DEBUG] Base64 stderr/stdout: ' .. base64_output)
+  end
+
+  -- Check decoded file size
+  local decoded_file = io.open(temp_decoded, 'r')
+  if not decoded_file then
+    print('[DEBUG] ERROR: Failed to open decoded file')
+    os.remove(temp_cipher)
+    vim.notify('Base64 decode failed', vim.log.levels.ERROR)
+    return
+  end
+
+  local decoded_size = decoded_file:seek('end')
+  decoded_file:close()
+  print('[DEBUG] Decoded file size: ' .. decoded_size .. ' bytes')
+
+  -- Step 3: GPG decrypt
+  print('[DEBUG] Step 5: Running GPG decrypt')
+  local gpg_cmd = string.format(
+    'gpg --batch --passphrase %s --no-symkey-cache -d < %s 2>&1',
+    vim.fn.shellescape(passphrase),
+    vim.fn.shellescape(temp_decoded)
   )
+  print('[DEBUG] GPG command: ' .. gpg_cmd:gsub(vim.fn.shellescape(passphrase), '[PASSPHRASE]'))
 
-  local handle = io.popen(cmd)
-  local plaintext = handle:read('*a')
-  local success = handle:close()
+  local gpg_handle = io.popen(gpg_cmd)
+  local plaintext = gpg_handle:read('*a')
+  local gpg_success = gpg_handle:close()
 
-  if not success or plaintext == '' then
-    vim.notify('Decryption failed: wrong passphrase or invalid ciphertext', vim.log.levels.ERROR)
+  -- Clean up temp files
+  os.remove(temp_cipher)
+  os.remove(temp_decoded)
+
+  print('[DEBUG] Step 6: GPG output')
+  print('[DEBUG] Output length: ' .. #plaintext)
+  print('[DEBUG] GPG exit success: ' .. tostring(gpg_success))
+
+  if not gpg_success or plaintext == '' then
+    print('[DEBUG] ERROR: Decryption failed')
+    vim.notify('Decryption failed: ' .. plaintext, vim.log.levels.ERROR)
     return
   end
 
   -- Show decrypted text in vim messages (not in buffer)
   vim.notify('Decrypted text: ' .. plaintext, vim.log.levels.INFO)
+  print('[DEBUG] === DECRYPTION COMPLETE ===')
 end
 
 -- Setup commands
