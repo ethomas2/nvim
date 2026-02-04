@@ -85,18 +85,18 @@ function M.decrypt_selection()
   local ciphertext_raw = b64_proc_handle.stdout
 
   -- Step 2: GPG decrypt (binary mode, pass decoded data via stdin)
-  local gpg_result = vim.system(
+  local gpg_proc_handle = vim.system(
     { 'gpg', '--batch', '--passphrase', passphrase, '--no-symkey-cache', '-d' },
     { stdin = ciphertext_raw, text = false }
   ):wait()
 
-  if gpg_result.code ~= 0 then
-    local error_msg = gpg_result.stderr or gpg_result.stdout or 'unknown error'
+  if gpg_proc_handle.code ~= 0 then
+    local error_msg = gpg_proc_handle.stderr or gpg_proc_handle.stdout or 'unknown error'
     vim.notify('Decryption failed: ' .. error_msg, vim.log.levels.ERROR)
     return
   end
 
-  local plaintext = gpg_result.stdout
+  local plaintext = gpg_proc_handle.stdout
 
   if plaintext == '' then
     vim.notify('Decryption failed: empty output', vim.log.levels.ERROR)
