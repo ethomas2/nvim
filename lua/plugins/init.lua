@@ -69,15 +69,17 @@ local default_plugins = {
 
   {
     "nvim-treesitter/nvim-treesitter",
-    event = { "BufReadPost", "BufNewFile" },
-    cmd = { "TSInstall", "TSBufEnable", "TSBufDisable", "TSModuleInfo" },
+    lazy = false,
     build = ":TSUpdate",
-    opts = function()
-      return require "plugins.configs.treesitter"
-    end,
-    config = function(_, opts)
+    config = function()
       dofile(vim.g.base46_cache .. "syntax")
-      require("nvim-treesitter.configs").setup(opts)
+      local parsers = require("plugins.configs.treesitter").ensure_installed
+      require("nvim-treesitter").install(parsers)
+      vim.treesitter.language.register("sql", { "postgresql", "pgsql", "postgres" })
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "*",
+        callback = function() pcall(vim.treesitter.start) end,
+      })
     end,
   },
 
