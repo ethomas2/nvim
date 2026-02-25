@@ -17,10 +17,10 @@ local opts = {
     }),
 
     -- Typescript / Web
-    null_ls.builtins.formatting.prettier.with({
+    null_ls.builtins.formatting.biome.with({
       filetypes = {
         "typescriptreact", "javascriptreact", "javascript", "typescript",
-        "css", "scss", "html", "json", "yaml", "graphql", "md", "txt",
+        "json", "jsonc", "css",
       },
     }),
 

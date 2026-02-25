@@ -26,6 +26,14 @@ vim.lsp.config("ts_ls", {
 })
 vim.lsp.enable("ts_ls")
 
+-- Biome (JS/TS/JSON/CSS linting + formatting)
+vim.lsp.config('biome', {
+  on_attach = on_attach,
+  capabilities = capabilities,
+  filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "json", "jsonc", "css" },
+})
+vim.lsp.enable('biome')
+
 -- Setup for Rust (rust-analyzer)
 vim.lsp.config('rust_analyzer', {
   on_attach = on_attach,
