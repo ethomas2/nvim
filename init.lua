@@ -69,3 +69,12 @@ require("custom.window_titles")
 
 -- Load GPG encryption/decryption commands
 require("custom.gpg_crypt").setup()
+
+-- Highlight lines with marks
+-- require("custom.mark_highlights").setup()
+
+-- Command-line abbreviation: :w foo-DATE → :w foo-20260228
+vim.cmd([[
+  cnoreabbrev <expr> __DATE strftime("%Y%m%d")
+  cnoreabbrev <expr> __DATETIME strftime("%Y%m%d-%H%M")
+]])

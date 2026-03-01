@@ -254,15 +254,18 @@ endif
 command! -nargs=0 NoScroll diffoff | windo set nocursorbind | windo set noscrollbind
 
 function! Dbase()
-  " fnamemodify: https://stackoverflow.com/a/24463362/4993041
-  let l:path = fnamemodify(expand("%"), ":~:.")
+  " Resolve path relative to the file's own git repo (handles submodules)
+  let l:file_dir = expand("%:p:h")
+  let l:git_prefix = trim(system("git -C " . shellescape(l:file_dir) . " rev-parse --show-prefix"))
+  let l:path = l:git_prefix . expand("%:t")
+  let l:git_c = "git -C " . shellescape(l:file_dir)
   let l:ft = &ft
   let l:orig_window = winnr()
   :windo diffoff
   exe "normal! " . l:orig_window . "\<C-W>\<C-W>"
   :diffthis
   :new
-  exe ".!git show $(git base):" . l:path
+  exe ".!" . l:git_c . " show $(" . l:git_c . " base):" . l:path
   exe "set ft=" . l:ft
   :diffthis
   au BufUnload <buffer> windo NoScroll
@@ -274,19 +277,21 @@ command! -nargs=0 Gdbase call Dbase()
 
 function! Gdt(...)
   let commit = a:0 > 0 ? a:1 : "HEAD"
-  " fnamemodify: https://stackoverflow.com/a/24463362/4993041
-  let l:path = fnamemodify(expand("%"), ":~:.")
+  " Resolve path relative to the file's own git repo (handles submodules)
+  let l:file_dir = expand("%:p:h")
+  let l:git_prefix = trim(system("git -C " . shellescape(l:file_dir) . " rev-parse --show-prefix"))
+  let l:path = l:git_prefix . expand("%:t")
+  let l:git_c = "git -C " . shellescape(l:file_dir)
   let l:ft = &ft
   let l:orig_window = winnr()
   :windo diffoff
   exe "normal! " . l:orig_window . "\<C-W>\<C-W>"
   :diffthis
   :new
-  exe ".!git show " . commit . ":" . l:path
+  exe ".!" . l:git_c . " show " . commit . ":" . l:path
   exe "set ft=" . l:ft
   :diffthis
   au BufUnload <buffer> windo NoScroll
-  " BufUnload function() { normal! l:orig_window "\<C-W>\<C-W>"; }
   exe ":normal! \<C-W>p"
 endfunction
 command! -nargs=? Gdt call Gdt(<f-args>)
@@ -295,11 +300,13 @@ cnoreabbrev gdt Gdt
 
 function! Gshow(...)
   let commit = a:1
-  " fnamemodify: https://stackoverflow.com/a/24463362/4993041
-  let l:path = fnamemodify(expand("%"), ":~:.")
+  " Resolve path relative to the file's own git repo (handles submodules)
+  let l:file_dir = expand("%:p:h")
+  let l:git_prefix = trim(system("git -C " . shellescape(l:file_dir) . " rev-parse --show-prefix"))
+  let l:path = l:git_prefix . expand("%:t")
   let l:ft = &ft
   :new
-  exe ".!git show " . commit . ":" . l:path
+  exe ".!git -C " . shellescape(l:file_dir) . " show " . commit . ":" . l:path
   exe "set ft=" . l:ft
 endfunction
 command! -nargs=? Gshow call Gdt(<f-args>)
