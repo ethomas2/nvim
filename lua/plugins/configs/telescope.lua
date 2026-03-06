@@ -48,7 +48,7 @@ local options = {
     },
   },
 
-  extensions_list = { "themes", "terms", "glyph", "emoji" },
+  extensions_list = { "themes", "terms", "glyph", "emoji", "dbase", "diff" },
 }
 
 return options
