@@ -137,6 +137,11 @@ local plugins = {
     -- Consider the thing you put in my-files (copypasted vindent)
     'jessekelighine/vindent.vim',
     lazy = false,
+    init = function()
+      vim.g.vindent_object_XX_ii = 'ii'
+      vim.g.vindent_object_XX_ai = 'ai'
+      vim.g.vindent_object_XX_aI = 'aI'
+    end,
   },
   -- {
   --   'glts/vim-textobj-comment',
