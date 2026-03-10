@@ -13,22 +13,10 @@ M.ui = {
   },
   -- Override diff highlight groups to add background colors
   hl_override = {
-    DiffAdd = {
-      guibg = "#005f00",
-      ctermbg = 22,
-    },
-    DiffDelete = {
-      guibg = "#5f0000",
-      ctermbg = 52,
-    },
-    DiffChange = {
-      guibg = "#00005f",
-      ctermbg = 17,
-    },
-    DiffText = {
-      guibg = "#005faf",
-      ctermbg = 25,
-    },
+    DiffAdd = { bg = "#005f00" },
+    DiffDelete = { bg = "#5f0000" },
+    DiffChange = { bg = "#00005f" },
+    DiffText = { bg = "#005faf" },
   },
 }
 M.plugins = "custom.plugins"
