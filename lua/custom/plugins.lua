@@ -189,6 +189,11 @@ local plugins = {
   {
     'kshenoy/vim-signature',
     lazy = false,
+    init = function()
+      -- Restore the old marked-line behavior: use the Search highlight group
+      -- so `ma`/`mA` tint the whole line.
+      vim.g.SignatureMarkLineHL = 'Search'
+    end,
   }, {
     'jrop/jq.nvim',
     lazy = false,
