@@ -256,8 +256,8 @@ command! -nargs=0 NoScroll diffoff | windo set nocursorbind | windo set noscroll
 function! Dbase()
   " Resolve path relative to the file's own git repo (handles submodules)
   let l:file_dir = expand("%:p:h")
-  let l:git_prefix = trim(system("git -C " . shellescape(l:file_dir) . " rev-parse --show-prefix"))
-  let l:path = l:git_prefix . expand("%:t")
+  let l:toplevel = trim(system("git -C " . shellescape(l:file_dir) . " rev-parse --show-toplevel"))
+  let l:path = strpart(expand("%:p"), len(l:toplevel) + 1)
   let l:git_c = "git -C " . shellescape(l:file_dir)
   let l:ft = &ft
   let l:orig_window = winnr()
@@ -279,8 +279,8 @@ function! Gdt(...)
   let commit = a:0 > 0 ? a:1 : "HEAD"
   " Resolve path relative to the file's own git repo (handles submodules)
   let l:file_dir = expand("%:p:h")
-  let l:git_prefix = trim(system("git -C " . shellescape(l:file_dir) . " rev-parse --show-prefix"))
-  let l:path = l:git_prefix . expand("%:t")
+  let l:toplevel = trim(system("git -C " . shellescape(l:file_dir) . " rev-parse --show-toplevel"))
+  let l:path = strpart(expand("%:p"), len(l:toplevel) + 1)
   let l:git_c = "git -C " . shellescape(l:file_dir)
   let l:ft = &ft
   let l:orig_window = winnr()
@@ -302,8 +302,8 @@ function! Gshow(...)
   let commit = a:1
   " Resolve path relative to the file's own git repo (handles submodules)
   let l:file_dir = expand("%:p:h")
-  let l:git_prefix = trim(system("git -C " . shellescape(l:file_dir) . " rev-parse --show-prefix"))
-  let l:path = l:git_prefix . expand("%:t")
+  let l:toplevel = trim(system("git -C " . shellescape(l:file_dir) . " rev-parse --show-toplevel"))
+  let l:path = strpart(expand("%:p"), len(l:toplevel) + 1)
   let l:ft = &ft
   :new
   exe ".!git -C " . shellescape(l:file_dir) . " show " . commit . ":" . l:path
