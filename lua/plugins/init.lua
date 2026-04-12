@@ -80,6 +80,7 @@ local default_plugins = {
         pattern = "*",
         callback = function() pcall(vim.treesitter.start) end,
       })
+      vim.api.nvim_create_user_command("TSPlaygroundToggle", "InspectTree", {})
     end,
   },
 

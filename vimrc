@@ -230,10 +230,10 @@ command! -bang -nargs=* SearchNotes
   \ )
 
 " Immediately trigger a search for the current keyword if there is one
-nnoremap <expr> <leader>g (expand("<cword>") ==? "") ? ":Rg " : ":Rg '\\b\<C-r>\<C-w>\\b'<CR>"
+nnoremap <expr> <leader>g (expand("<cword>") ==? "") ? ":Rg " : ":Rg '\\b\<C-r>\<C-w>\\b'"
 
 " Immediately trigger a search for the current selection if there is one
-xnoremap <leader>g "zy:exe "Rg ".@z.""<CR>
+xnoremap <leader>g "zy:exe "Rg ".@z.""
 
 let g:prettier#exec_cmd_path = "~/.config/yarn/global/node_modules/.bin/prettier"
 let g:prettier#exec_cmd_async = 1
@@ -256,8 +256,7 @@ command! -nargs=0 NoScroll diffoff | windo set nocursorbind | windo set noscroll
 function! Dbase()
   " Resolve path relative to the file's own git repo (handles submodules)
   let l:file_dir = expand("%:p:h")
-  let l:toplevel = trim(system("git -C " . shellescape(l:file_dir) . " rev-parse --show-toplevel"))
-  let l:path = strpart(expand("%:p"), len(l:toplevel) + 1)
+  let l:path = trim(system("git -C " . shellescape(l:file_dir) . " ls-files --full-name -- " . shellescape(expand("%:t"))))
   let l:git_c = "git -C " . shellescape(l:file_dir)
   let l:ft = &ft
   let l:orig_window = winnr()
@@ -279,8 +278,7 @@ function! Gdt(...)
   let commit = a:0 > 0 ? a:1 : "HEAD"
   " Resolve path relative to the file's own git repo (handles submodules)
   let l:file_dir = expand("%:p:h")
-  let l:toplevel = trim(system("git -C " . shellescape(l:file_dir) . " rev-parse --show-toplevel"))
-  let l:path = strpart(expand("%:p"), len(l:toplevel) + 1)
+  let l:path = trim(system("git -C " . shellescape(l:file_dir) . " ls-files --full-name -- " . shellescape(expand("%:t"))))
   let l:git_c = "git -C " . shellescape(l:file_dir)
   let l:ft = &ft
   let l:orig_window = winnr()
@@ -302,8 +300,7 @@ function! Gshow(...)
   let commit = a:1
   " Resolve path relative to the file's own git repo (handles submodules)
   let l:file_dir = expand("%:p:h")
-  let l:toplevel = trim(system("git -C " . shellescape(l:file_dir) . " rev-parse --show-toplevel"))
-  let l:path = strpart(expand("%:p"), len(l:toplevel) + 1)
+  let l:path = trim(system("git -C " . shellescape(l:file_dir) . " ls-files --full-name -- " . shellescape(expand("%:t"))))
   let l:ft = &ft
   :new
   exe ".!git -C " . shellescape(l:file_dir) . " show " . commit . ":" . l:path
@@ -347,6 +344,12 @@ nnoremap <silent> <Leader>h :set nohls<CR>
 
 
 cnoremap <C-a> <C-b>
+
+cabbrev fp <C-r>=expand('%:p')<CR>
+cabbrev fr <C-r>=expand('%')<CR>
+
+nnoremap <leader>fp :put =expand('%:p')<CR>
+nnoremap <leader>fr :put =expand('%')<CR>
 
 " https://vim.fandom.com/wiki/Simplifying_regular_expressions_using_magic_and_no-magic
 " cnoremap %s/ %smagic/
