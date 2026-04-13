@@ -300,7 +300,9 @@ function! Gshow(...)
   let commit = a:1
   " Resolve path relative to the file's own git repo (handles submodules)
   let l:file_dir = expand("%:p:h")
+  :echom "file dir "  . l:file_dir
   let l:path = trim(system("git -C " . shellescape(l:file_dir) . " ls-files --full-name -- " . shellescape(expand("%:t"))))
+  :echom "path "  . l:path
   let l:ft = &ft
   :new
   exe ".!git -C " . shellescape(l:file_dir) . " show " . commit . ":" . l:path

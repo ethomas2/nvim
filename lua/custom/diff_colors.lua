@@ -28,7 +28,6 @@ local function apply_diff_scheme(scheme_num)
   if diff_color_schemes[scheme_num] then
     diff_color_schemes[scheme_num]()
     current_diff_scheme = scheme_num
-    vim.notify("Diff color scheme: " .. scheme_num, vim.log.levels.INFO)
   else
     vim.notify("Invalid diff color scheme: " .. scheme_num, vim.log.levels.ERROR)
   end
