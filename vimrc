@@ -254,17 +254,36 @@ endif
 command! -nargs=0 NoScroll diffoff | windo set nocursorbind | windo set noscrollbind
 
 function! Dbase()
-  " Resolve path relative to the file's own git repo (handles submodules)
+  " Resolve path relative to the file's own git repo (handles submodules).
+  " Scrub git env vars set by `git difftool` so that opening another file
+  " inside a difftool-spawned nvim and running :Gdbase doesn't keep talking
+  " to difftool's temp index/repo.
+  let l:file_path = expand("%:p")
   let l:file_dir = expand("%:p:h")
-  let l:path = trim(system("git -C " . shellescape(l:file_dir) . " ls-files --full-name -- " . shellescape(expand("%:t"))))
-  let l:git_c = "git -C " . shellescape(l:file_dir)
+  let l:env_prefix = "env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE -u GIT_PREFIX -u GIT_COMMON_DIR -u GIT_OBJECT_DIRECTORY -u GIT_ALTERNATE_OBJECT_DIRECTORIES "
+  let l:git_c = l:env_prefix . "git -C " . shellescape(l:file_dir)
+  let l:toplevel = trim(system(l:git_c . " rev-parse --show-toplevel"))
+  if v:shell_error || empty(l:toplevel)
+    echoerr "Gdbase: not in a git repo (" . l:file_dir . ")"
+    return
+  endif
+  if stridx(l:file_path, l:toplevel . "/") != 0
+    echoerr "Gdbase: file is outside git repo (" . l:file_path . " not under " . l:toplevel . ")"
+    return
+  endif
+  let l:path = strpart(l:file_path, len(l:toplevel) + 1)
+  let l:base = trim(system(l:git_c . " base"))
+  if v:shell_error || empty(l:base)
+    echoerr "Gdbase: 'git base' failed in " . l:file_dir
+    return
+  endif
   let l:ft = &ft
   let l:orig_window = winnr()
   :windo diffoff
   exe "normal! " . l:orig_window . "\<C-W>\<C-W>"
   :diffthis
   :new
-  exe ".!" . l:git_c . " show $(" . l:git_c . " base):" . l:path
+  exe ".!" . l:git_c . " show " . shellescape(l:base . ":" . l:path)
   exe "set ft=" . l:ft
   :diffthis
   au BufUnload <buffer> windo NoScroll
