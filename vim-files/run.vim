@@ -19,6 +19,8 @@ function! ExecuteScript(...)
     let l:cmd="bash"
   elseif &filetype == "javascript.jsx"
     let l:cmd = "node"
+  elseif &filetype == "typescript"
+    let l:cmd = "npx tsx"
   else
     echo "unknown filetype " . &filetype . " and no command passed in"
     return

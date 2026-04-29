@@ -12,6 +12,7 @@ inoremap <C-j>table <Esc>!!cat ~/.vim/snippets/tbl<CR>}}}o<esc>o
 inoremap <C-j>prof <Esc>!!cat ~/.vim/snippets/prof<CR>}o<esc>0i
 inoremap <C-j>err <Esc>!!cat ~/.vim/snippets/python_error_hook<CR>}o<esc>0i
 inoremap <C-j>sep ------------------------------------------------------------------------------
+inoremap <C-j>td // TODO (claude):
 
 
 inoremap <C-j>pset \pset null 'Ø'

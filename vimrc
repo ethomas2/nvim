@@ -350,8 +350,8 @@ cnoremap <C-a> <C-b>
 cabbrev fp <C-r>=expand('%:p')<CR>
 cabbrev fr <C-r>=expand('%')<CR>
 
-nnoremap <leader>fp :put =expand('%:p')<CR>
-nnoremap <leader>fr :put =expand('%')<CR>
+nnoremap <leader>fp :let @+=expand('%:p')<Bar>echo expand('%:p')<CR>
+nnoremap <leader>fr :let @+=expand('%')<Bar>echo expand('%')<CR>
 
 " https://vim.fandom.com/wiki/Simplifying_regular_expressions_using_magic_and_no-magic
 " cnoremap %s/ %smagic/
