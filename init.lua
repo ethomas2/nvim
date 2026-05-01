@@ -73,6 +73,9 @@ require("custom.gpg_crypt").setup()
 -- Load git diff Telescope pickers (:DiffFiles, :Telescope dbase, :Telescope diff)
 require("custom.git_file_picker")
 
+-- Load :Brain <query> Telescope picker (mirrors `brain fzf`)
+require("custom.brain")
+
 -- Highlight lines with marks
 -- require("custom.mark_highlights").setup()
 
