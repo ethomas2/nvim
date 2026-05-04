@@ -71,6 +71,47 @@ autocmd("FileType", {
   end,
 })
 
+-- Fix `gw` / `gq` wrapping inside JSDoc comments for JS/TS.
+--
+-- Bug: Inside a JSDoc block, `gw` on a long ` * 1. ...` line produces lines
+-- whose `*` column alternates between 1 and 3, breaking visual alignment.
+-- Root cause: nvim's runtime `indent/typescript.vim` sets
+-- `indentexpr=GetTypescriptIndent()`, which returns inconsistent values for
+-- wrapped JSDoc lines and is invoked by autoindent while `gw` inserts wraps.
+--
+-- Fix: clear `indentexpr` for these filetypes. The trade-off is that the `=`
+-- operator falls back to `autoindent` (copy previous-line indent) instead of
+-- the runtime indent script. For most TS code that's acceptable; if you want
+-- smarter `=`, enable nvim-treesitter's indent module.
+--
+-- Also: set `formatprg=par` so `gq` reflows whole comment blocks correctly,
+-- and clear `formatexpr` so `gq` uses par instead of the LSP formatter
+-- (which silently no-ops on comment-range formatting). LSP re-sets
+-- `formatexpr` on attach, so an LspAttach autocmd clears it again.
+local js_ts_fts = { "typescript", "typescriptreact", "javascript", "javascriptreact" }
+
+autocmd("FileType", {
+  pattern = js_ts_fts,
+  callback = function(args)
+    local buf = args.buf
+    vim.bo[buf].indentexpr = ""
+    vim.bo[buf].formatprg = "par -w80 B=.,?_A_a Q=_s>|"
+    vim.bo[buf].formatexpr = ""
+    -- `n` flag: list-aware wrapping. Continuation lines align under the
+    -- text of `1. ` / `- ` / etc. (e.g. ` *    just returning ...`).
+    vim.opt_local.formatoptions:append("n")
+  end,
+})
+
+autocmd("LspAttach", {
+  callback = function(args)
+    local ft = vim.bo[args.buf].filetype
+    if vim.tbl_contains(js_ts_fts, ft) then
+      vim.bo[args.buf].formatexpr = ""
+    end
+  end,
+})
+
 -- reload some chadrc options on-save
 autocmd("BufWritePost", {
   pattern = vim.tbl_map(function(path)
