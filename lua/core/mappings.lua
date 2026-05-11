@@ -355,6 +355,23 @@ M.nvterm = {
       "New horizontal term",
     },
 
+    ["<leader>H"] = {
+      function()
+        local dir = vim.fn.expand "%:p:h"
+        if dir == "" then
+          return
+        end
+        local orig_win = vim.api.nvim_get_current_win()
+        local orig_cwd = vim.fn.getcwd(orig_win)
+        vim.cmd("lcd " .. vim.fn.fnameescape(dir))
+        require("nvterm.terminal").new "horizontal"
+        vim.api.nvim_win_call(orig_win, function()
+          vim.cmd("lcd " .. vim.fn.fnameescape(orig_cwd))
+        end)
+      end,
+      "New horizontal term in buffer dir",
+    },
+
     ["<leader>v"] = {
       function()
         require("nvterm.terminal").new "vertical"
