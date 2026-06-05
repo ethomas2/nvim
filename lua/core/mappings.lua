@@ -31,11 +31,20 @@ M.general = {
 
     -- line numbers
     ["<leader>rn"] = { "<cmd> set rnu! <CR>", "Toggle relative number" },
-    ["<leader>n"] = {
+    ["<leader>np"] = {
       function()
         require("custom.configs.search_notes").search_notes()
       end,
       "Search notes",
+    },
+    ["<leader>nw"] = {
+      function()
+        require("telescope.builtin").live_grep({
+          search_dirs = { vim.fn.expand("~/notes/Main") },
+          prompt_title = "Live grep (vault)",
+        })
+      end,
+      "Live grep vault",
     },
 
     -- Allow moving the cursor through wrapped lines with j, k, <Up> and <Down>
