@@ -18,13 +18,25 @@ vim.lsp.enable('pyright')
 --   filetypes = {"javascript", "typescript", "typescriptreact", "javascriptreact"},
 -- })
 -- vim.lsp.enable('tsserver')
+-- tsgo (native TypeScript server) when installed: one process per monorepo and far less memory.
+-- Fallback is typescript-language-server with tsserver's heap capped, so it restarts instead of
+-- growing for days. Set vim.g.ts_lsp = "ts_ls" before this loads to force the old server.
+vim.lsp.config("tsgo", {
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
 vim.lsp.config("ts_ls", {
   cmd = { "typescript-language-server", "--stdio" },
   on_attach = on_attach,
   capabilities = capabilities,
   filetypes = { "javascript", "typescript", "typescriptreact", "javascriptreact" },
+  init_options = { maxTsServerMemory = 3072 },
 })
-vim.lsp.enable("ts_ls")
+if vim.g.ts_lsp ~= "ts_ls" and vim.fn.executable("tsgo") == 1 then
+  vim.lsp.enable("tsgo")
+else
+  vim.lsp.enable("ts_ls")
+end
 
 -- Biome (JS/TS/JSON/CSS linting + formatting)
 vim.lsp.config('biome', {
